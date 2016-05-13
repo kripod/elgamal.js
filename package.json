@@ -1,8 +1,7 @@
 {
-  "private": true,
   "name": "elgamal",
-  "version": "0.0.0",
-  "description": "",
+  "version": "0.1.0",
+  "description": "ElGamal encryption algorithm for JavaScript.",
   "author": "Kristóf Poduszló <kripod@protonmail.com>",
   "license": "MIT",
   "engines": {
@@ -27,11 +26,9 @@
     "babel-knex": "babel-node ./node_modules/knex/lib/bin/cli"
   },
   "dependencies": {
-    "asn1": "^0.2.3",
     "babel-runtime": "^6.6.1",
     "bluebird": "^3.3.5",
-    "jsbn": "^0.1.0",
-    "lodash": "^4.12.0"
+    "jsbn": "^0.1.0"
   },
   "devDependencies": {
     "babel-cli": "^6.8.0",
@@ -47,5 +44,12 @@
     "isparta": "^4.0.0",
     "istanbul": "^0.4.3",
     "tape": "^4.5.1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/kripod/elgamal.js.git"
+  },
+  "bugs": {
+    "url": "https://github.com/kripod/elgamal.js/issues"
   }
 }

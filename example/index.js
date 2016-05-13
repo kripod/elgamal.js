@@ -5,10 +5,13 @@ async function run() {
   console.time('example');
 
   const eg = await ElGamal.generateAsync(2048);
-  console.log(eg);
+  // console.log(eg);
 
-  const obj = await eg.encryptAsync(new BigInteger('672631631884797268976048'));
-  console.log(obj);
+  const encrypted = await eg.encryptAsync(new BigInteger('672631631884797268'));
+  console.log(encrypted);
+
+  const decrypted = await eg.decryptAsync(encrypted);
+  console.log(decrypted.toString());
 
   console.timeEnd('example');
 }

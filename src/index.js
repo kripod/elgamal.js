@@ -1,5 +1,4 @@
 import { BigInteger } from 'jsbn';
-import _ from 'lodash';
 import * as Utils from './utils';
 
 export default class ElGamal {
@@ -95,7 +94,7 @@ export default class ElGamal {
 
   /**
    * Encrypts a message.
-   * @param {string|number} m Piece of data to be encrypted, which must be
+   * @param {string|BigInteger} m Piece of data to be encrypted, which must be
    * numerically smaller than `p`.
    * @param {BigInteger} [k] A secret number, chosen randomly in the closed
    * range `[1, p - 2]`.
@@ -107,7 +106,7 @@ export default class ElGamal {
     );
     const p = this.p;
 
-    if (_.isString(m)) {
+    if (typeof m === 'string') {
       // TODO: Convert m from string to BigInteger if necessary
     }
 
@@ -116,5 +115,29 @@ export default class ElGamal {
 
     // TODO: Make the result convertable (to a string)
     return { a, b };
+  }
+
+  /**
+   * Decrypts a message.
+   * @param {string|BigInteger} m Piece of data to be decrypted.
+   * @returns {string|BigInteger}
+   */
+  async decryptAsync(m) {
+    // TODO: Use a custom error object
+    if (!this.x) throw new Error('Private key not available.');
+
+    const p = this.p;
+    const r = await Utils.getRandomBigIntegerAsync(
+      2,
+      this.p.subtract(BigInteger.ONE)
+    );
+
+    const aBlind = this.g.modPow(r, p).multiply(m.a).remainder(p);
+    const ax = aBlind.modPow(this.x, p);
+
+    const plaintextBlind = ax.modInverse(p).multiply(m.b).remainder(p);
+    const plaintext = this.y.modPow(r, p).multiply(plaintextBlind).remainder(p);
+
+    return plaintext;
   }
 }
