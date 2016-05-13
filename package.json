@@ -31,8 +31,7 @@
     "babel-runtime": "^6.6.1",
     "bluebird": "^3.3.5",
     "jsbn": "^0.1.0",
-    "lodash": "^4.12.0",
-    "node-forge": "^0.6.39"
+    "lodash": "^4.12.0"
   },
   "devDependencies": {
     "babel-cli": "^6.8.0",
