@@ -4,7 +4,7 @@ import { BigInteger } from 'jsbn';
 
 Promise.promisifyAll(crypto);
 
-const BIG_TWO = new BigInteger('2');
+export const BIG_TWO = new BigInteger('2');
 
 /**
  * Returns a random BigInteger with the given amount of bits.
