@@ -38,14 +38,10 @@ export default class ElGamal {
       p = q.shiftLeft(1).add(BigInteger.ONE);
     } while (!p.isProbablePrime()); // Ensure that p is a prime
 
-    console.log(`q: ${q}`);
-    console.log(`p: ${p}`);
-
     let g;
     do { // eslint-disable-line no-constant-condition
       // Avoid g = 2 because of Bleichenbacher's attack
       g = await Utils.getRandomBigIntegerAsync(new BigInteger('3'), p);
-      console.log(`g: ${g}`);
 
       if (g.modPowInt(2, p).equals(BigInteger.ONE)) continue;
       if (g.modPow(q, p).equals(BigInteger.ONE)) continue;
@@ -86,10 +82,8 @@ export default class ElGamal {
   constructor(p, g, y, x) {
     this.p = p;
     this.g = g;
+    this.y = y;
     this.x = x;
-
-    // Generate public key
-    this.y = g.modPow(x, p);
   }
 
   /**
@@ -106,12 +100,14 @@ export default class ElGamal {
     );
     const p = this.p;
 
+    let mBi = m;
     if (typeof m === 'string') {
-      // TODO: Convert m from string to BigInteger if necessary
+      // Convert `m` to BigInteger
+      mBi = new BigInteger(new Buffer(m).toString('hex'), 16);
     }
 
     const a = this.g.modPow(tmpKey, p);
-    const b = this.y.modPow(tmpKey, p).multiply(m).remainder(p);
+    const b = this.y.modPow(tmpKey, p).multiply(mBi).remainder(p);
 
     // TODO: Make the result convertable (to a string)
     return { a, b };
