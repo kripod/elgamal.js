@@ -23,10 +23,9 @@
     "watch": "npm run build -- -w",
     "prepublish": "npm run build",
     "doc": "documentation build ./src/index.js -o ./docs -f html",
-    "test": "npm run init-db && npm run test:quick && node -e \"require('./lib');\" && eslint ./src",
+    "test": "npm run test:quick && node -e \"require('./lib');\" && eslint ./src",
     "test:quick": "npm run babel-isparta -- cover ./tests",
-    "babel-isparta": "babel-node ./node_modules/isparta/bin/isparta",
-    "babel-knex": "babel-node ./node_modules/knex/lib/bin/cli"
+    "babel-isparta": "babel-node ./node_modules/isparta/bin/isparta"
   },
   "dependencies": {
     "babel-runtime": "^6.6.1",
@@ -36,6 +35,7 @@
   "devDependencies": {
     "babel-cli": "^6.8.0",
     "babel-eslint": "^6.0.4",
+    "babel-istanbul": "^0.8.0",
     "babel-plugin-transform-async-to-generator": "^6.8.0",
     "babel-plugin-transform-class-properties": "^6.8.0",
     "babel-plugin-transform-runtime": "^6.8.0",
