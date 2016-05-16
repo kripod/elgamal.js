@@ -1,4 +1,4 @@
-import { BigInteger } from 'jsbn';
+import { BigInteger as BigInt } from 'jsbn';
 import EncryptedValue from './encrypted-value';
 import * as Utils from './utils';
 
@@ -8,28 +8,28 @@ import * as Utils from './utils';
 export default class ElGamal {
   /**
    * Safe prime number.
-   * @type {BigInteger}
+   * @type {BigInt}
    * @memberof ElGamal
    */
   p;
 
   /**
    * Generator.
-   * @type {BigInteger}
+   * @type {BigInt}
    * @memberof ElGamal
    */
   g;
 
   /**
    * Public key.
-   * @type {BigInteger}
+   * @type {BigInt}
    * @memberof ElGamal
    */
   y;
 
   /**
    * Private key.
-   * @type {BigInteger}
+   * @type {BigInt}
    * @memberof ElGamal
    */
   x;
@@ -39,35 +39,31 @@ export default class ElGamal {
     let p;
     do {
       q = await Utils.getBigPrimeAsync(primeBits - 1);
-      p = q.shiftLeft(1).add(BigInteger.ONE);
+      p = q.shiftLeft(1).add(BigInt.ONE);
     } while (!p.isProbablePrime()); // Ensure that p is a prime
 
     let g;
     do { // eslint-disable-line no-constant-condition
       // Avoid g = 2 because of Bleichenbacher's attack
-      g = await Utils.getRandomBigIntegerAsync(new BigInteger('3'), p);
+      g = await Utils.getRandomBigIntAsync(new BigInt('3'), p);
 
-      if (g.modPowInt(2, p).equals(BigInteger.ONE)) continue;
-      if (g.modPow(q, p).equals(BigInteger.ONE)) continue;
+      if (g.modPowInt(2, p).equals(BigInt.ONE)) continue;
+      if (g.modPow(q, p).equals(BigInt.ONE)) continue;
 
       // Discard g if it divides p - 1
-      if (p.subtract(BigInteger.ONE).remainder(g).equals(BigInteger.ZERO)) {
-        continue;
-      }
+      if (p.subtract(BigInt.ONE).remainder(g).equals(BigInt.ZERO)) continue;
 
       // Discard g if g^(-1) divides p - 1 because of Khadir's attack
       const gInv = g.modInverse(p);
-      if (p.subtract(BigInteger.ONE).remainder(gInv).equals(BigInteger.ZERO)) {
-        continue;
-      }
+      if (p.subtract(BigInt.ONE).remainder(gInv).equals(BigInt.ZERO)) continue;
 
       break;
     } while (true);
 
     // Generate private key
-    const x = await Utils.getRandomBigIntegerAsync(
+    const x = await Utils.getRandomBigIntAsync(
       Utils.BIG_TWO,
-      p.subtract(BigInteger.ONE)
+      p.subtract(BigInt.ONE)
     );
 
     // Generate public key
@@ -78,10 +74,10 @@ export default class ElGamal {
 
   /**
    * Creates a new ElGamal instance.
-   * @param {BigInteger|string|number} p Safe prime number.
-   * @param {BigInteger|string|number} g Generator.
-   * @param {BigInteger|string|number} y Public key.
-   * @param {BigInteger|string|number} x Private key.
+   * @param {BigInt|string|number} p Safe prime number.
+   * @param {BigInt|string|number} g Generator.
+   * @param {BigInt|string|number} y Public key.
+   * @param {BigInt|string|number} x Private key.
    */
   constructor(p, g, y, x) {
     this.p = Utils.parseBigInt(p);
@@ -92,24 +88,24 @@ export default class ElGamal {
 
   /**
    * Encrypts a message.
-   * @param {string|BigInteger|number} m Piece of data to be encrypted, which
-   * must be numerically smaller than `p`.
-   * @param {BigInteger|string|number} [k] A secret number, chosen randomly in
-   * the closed range `[1, p-2]`.
+   * @param {string|BigInt|number} m Piece of data to be encrypted, which must
+   * be numerically smaller than `p`.
+   * @param {BigInt|string|number} [k] A secret number, chosen randomly in the
+   * closed range `[1, p-2]`.
    * @returns {EncryptedValue}
    */
   async encryptAsync(m, k) {
-    const tmpKey = Utils.parseBigInt(k) || await Utils.getRandomBigIntegerAsync(
-      BigInteger.ONE,
-      this.p.subtract(BigInteger.ONE)
+    const tmpKey = Utils.parseBigInt(k) || await Utils.getRandomBigIntAsync(
+      BigInt.ONE,
+      this.p.subtract(BigInt.ONE)
     );
     const p = this.p;
 
     let mBi = m;
     if (typeof m === 'string') {
-      mBi = new BigInteger(new Buffer(m).toString('hex'), 16);
+      mBi = new BigInt(new Buffer(m).toString('hex'), 16);
     } else if (typeof m === 'number') {
-      mBi = new BigInteger(`${m}`);
+      mBi = new BigInt(`${m}`);
     }
 
     const a = this.g.modPow(tmpKey, p);
@@ -121,17 +117,14 @@ export default class ElGamal {
   /**
    * Decrypts a message.
    * @param {EncryptedValue} m Piece of data to be decrypted.
-   * @returns {string|BigInteger}
+   * @returns {string|BigInt}
    */
   async decryptAsync(m) {
     // TODO: Use a custom error object
     if (!this.x) throw new Error('Private key not available.');
 
     const p = this.p;
-    const r = await Utils.getRandomBigIntegerAsync(
-      2,
-      this.p.subtract(BigInteger.ONE)
-    );
+    const r = await Utils.getRandomBigIntAsync(2, this.p.subtract(BigInt.ONE));
 
     const aBlind = this.g.modPow(r, p).multiply(m.a).remainder(p);
     const ax = aBlind.modPow(this.x, p);

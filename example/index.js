@@ -1,4 +1,4 @@
-import { BigInteger } from 'jsbn';
+import { BigInteger as BigInt } from 'jsbn';
 import ElGamal from './../src';
 
 async function run() {
@@ -7,7 +7,7 @@ async function run() {
   const eg = await ElGamal.generateAsync(2048);
   // console.log(eg);
 
-  const encrypted = await eg.encryptAsync(new BigInteger('672631631884797268'));
+  const encrypted = await eg.encryptAsync(new BigInt('672631631884797268'));
   console.log(encrypted);
 
   const decrypted = await eg.decryptAsync(encrypted);

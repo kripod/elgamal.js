@@ -1,4 +1,4 @@
-import { BigInteger } from 'jsbn';
+import { BigInteger as BigInt } from 'jsbn';
 import test from 'tape';
 import ElGamal from './../src';
 
@@ -39,15 +39,15 @@ for (const [bits, vector] of Object.entries(testVectors)) {
 
   test(`${bits}-bit encryption`, (t) => {
     const eg = new ElGamal(
-      new BigInteger(vector.p, 16),
-      new BigInteger(vector.g, 16),
-      new BigInteger(vector.y, 16),
-      new BigInteger(vector.x, 16)
+      new BigInt(vector.p, 16),
+      new BigInt(vector.g, 16),
+      new BigInt(vector.y, 16),
+      new BigInt(vector.x, 16)
     );
 
     eg.encryptAsync(
-      new BigInteger(vector.m, 16),
-      new BigInteger(vector.k, 16)
+      new BigInt(vector.m, 16),
+      new BigInt(vector.k, 16)
     ).then((encrypted) => {
       t.equal(encrypted.a.toString(16), vector.a);
       t.equal(encrypted.b.toString(16), vector.b);
@@ -57,15 +57,15 @@ for (const [bits, vector] of Object.entries(testVectors)) {
 
   test(`${bits}-bit decryption`, (t) => {
     const eg = new ElGamal(
-      new BigInteger(vector.p, 16),
-      new BigInteger(vector.g, 16),
-      new BigInteger(vector.y, 16),
-      new BigInteger(vector.x, 16)
+      new BigInt(vector.p, 16),
+      new BigInt(vector.g, 16),
+      new BigInt(vector.y, 16),
+      new BigInt(vector.x, 16)
     );
 
     eg.decryptAsync({
-      a: new BigInteger(vector.a, 16),
-      b: new BigInteger(vector.b, 16),
+      a: new BigInt(vector.a, 16),
+      b: new BigInt(vector.b, 16),
     }).then((decrypted) => {
       t.equal(decrypted.toString(16), vector.m);
       t.end();
