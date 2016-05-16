@@ -43,22 +43,17 @@ export default class ElGamal {
     } while (!p.isProbablePrime()); // Ensure that p is a prime
 
     let g;
-    do { // eslint-disable-line no-constant-condition
-      // Avoid g = 2 because of Bleichenbacher's attack
+    do {
+      // Avoid g=2 because of Bleichenbacher's attack
       g = await Utils.getRandomBigIntAsync(new BigInt('3'), p);
-
-      if (g.modPowInt(2, p).equals(BigInt.ONE)) continue;
-      if (g.modPow(q, p).equals(BigInt.ONE)) continue;
-
-      // Discard g if it divides p - 1
-      if (p.subtract(BigInt.ONE).remainder(g).equals(BigInt.ZERO)) continue;
-
-      // Discard g if g^(-1) divides p - 1 because of Khadir's attack
-      const gInv = g.modInverse(p);
-      if (p.subtract(BigInt.ONE).remainder(gInv).equals(BigInt.ZERO)) continue;
-
-      break;
-    } while (true);
+    } while (
+      g.modPowInt(2, p).equals(BigInt.ONE) ||
+      g.modPow(q, p).equals(BigInt.ONE) ||
+      // g|p-1
+      p.subtract(BigInt.ONE).remainder(g).equals(BigInt.ZERO) ||
+      // g^(-1)|p-1 (evades Khadir's attack)
+      p.subtract(BigInt.ONE).remainder(g.modInverse(p)).equals(BigInt.ZERO)
+    );
 
     // Generate private key
     const x = await Utils.getRandomBigIntAsync(
