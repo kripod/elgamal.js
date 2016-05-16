@@ -29,6 +29,14 @@ const testVectors = {
 
 // Evaluate every specified test vector
 for (const [bits, vector] of Object.entries(testVectors)) {
+  test(`${bits}-bit key generation`, (t) => {
+    ElGamal.generateAsync(bits)
+      .then((eg) => {
+        t.equal(eg.p.bitLength(), parseInt(bits, 10));
+        t.end();
+      });
+  });
+
   test(`${bits}-bit encryption`, (t) => {
     const eg = new ElGamal(
       new BigInteger(vector.p, 16),

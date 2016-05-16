@@ -1,0 +1,23 @@
+language: node_js
+node_js:
+  - '6'
+  - '5'
+  - '4'
+  - '0.12'
+  - '0.10'
+after_success:
+  - bash <(curl -s https://codecov.io/bash)
+cache:
+  directories:
+    - node_modules
+deploy:
+  provider: npm
+  email: kripod@protonmail.com
+  api_key:
+    secure: J8o3FERVGt2vjc22e75laVLeSNFVf3xArDRvnGeFZ3RcSuHU68vbZRSO3DWaS+khba4Rb5ivujXVPcMwQbuODxPIugaUBvtAxQ2lpNx670y4GOWxLxYKUcvf8yoo8+9Ie4gxd3NSif+Opkh0VHezsEvUSdGe73CZvg6a1S752qbUOo9XSvwTWbRExSLZesTVCSEjBb8qLrmeXAGVl7XJPDquAxq2lXEDTqJRfDZ2boXrYBQ1cw71auI+U4tEK9ywgEKfnYXqN34mPxXWhqNtezurCg9ifbL4D78cmxbR2IDzUAgLqdc/sGEP+BTNkRnJTIsuO25McqyoKEPTJYLUB3eKlUItinbjRwc41b9N9YClINPJ1zf/A9S9UIuz2vqZEmiw1Bsh9BXxPphPcm6rWU8Bspp4sLS+1Y7y9WNrxp2Tb1FIo/KhB/gkKr4S04Wv3I1wn9Hq3OKFug91RbzmNMAQtAm6OJKj/gJngwKP02tCi7V5V2vBhF9tka/uGHooGtelIzNVjHSyC4ViK2mT1G1tNGZyrMfOEbbVt/nmKuFFHhxMP2f9aBKBlJBBkW87Cxwwd9Aj+/Dmlmj7pH5xTKh9uRekhabGSwjMuYN7Y07v/T7Jnk7P/SyL8emcP6OdnmWXAF0HtVynjzbYa2Ait2idJisvFidJDeQYo4rmcJI=
+  on:
+    tags: true
+notifications:
+  webhooks:
+    urls:
+      - https://webhooks.gitter.im/e/47eeb7b78a1e3eb1ae44

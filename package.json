@@ -22,10 +22,8 @@
     "build": "babel ./src -d ./lib -s",
     "watch": "npm run build -- -w",
     "prepublish": "npm run build",
-    "doc": "documentation build ./src/index.js -o ./docs -f html",
-    "test": "npm run test:quick && node -e \"require('./lib');\" && eslint ./src",
-    "test:quick": "npm run babel-isparta -- cover ./tests",
-    "babel-isparta": "babel-node ./node_modules/isparta/bin/isparta"
+    "test": "babel-node ./node_modules/babel-istanbul/lib/cli cover ./tests && eslint ./src",
+    "doc": "documentation build ./src/index.js -o ./docs -f html"
   },
   "dependencies": {
     "babel-runtime": "^6.6.1",
@@ -44,7 +42,6 @@
     "eslint": "^2.9.0",
     "eslint-config-airbnb-base": "^3.0.1",
     "eslint-plugin-import": "^1.7.0",
-    "isparta": "^4.0.0",
     "istanbul": "^0.4.3",
     "tape": "^4.5.1"
   },

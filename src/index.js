@@ -92,6 +92,7 @@ export default class ElGamal {
    * numerically smaller than `p`.
    * @param {BigInteger} [k] A secret number, chosen randomly in the closed
    * range `[1, p - 2]`.
+   * @returns {Object}
    */
   async encryptAsync(m, k) {
     const tmpKey = k || await Utils.getRandomBigIntegerAsync(
