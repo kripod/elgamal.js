@@ -1,6 +1,10 @@
 import { BigInteger } from 'jsbn';
+import EncryptedValue from './encrypted-value';
 import * as Utils from './utils';
 
+/**
+ * Provides methods for the ElGamal cryptosystem.
+ */
 export default class ElGamal {
   /**
    * Safe prime number.
@@ -74,28 +78,28 @@ export default class ElGamal {
 
   /**
    * Creates a new ElGamal instance.
-   * @param {BigInteger} p Safe prime number.
-   * @param {BigInteger} g Generator.
-   * @param {BigInteger} y Public key.
-   * @param {BigInteger} x Private key.
+   * @param {BigInteger|string|number} p Safe prime number.
+   * @param {BigInteger|string|number} g Generator.
+   * @param {BigInteger|string|number} y Public key.
+   * @param {BigInteger|string|number} x Private key.
    */
   constructor(p, g, y, x) {
-    this.p = p;
-    this.g = g;
-    this.y = y;
-    this.x = x;
+    this.p = Utils.parseBigInt(p);
+    this.g = Utils.parseBigInt(g);
+    this.y = Utils.parseBigInt(y);
+    this.x = Utils.parseBigInt(x);
   }
 
   /**
    * Encrypts a message.
-   * @param {string|BigInteger} m Piece of data to be encrypted, which must be
-   * numerically smaller than `p`.
-   * @param {BigInteger} [k] A secret number, chosen randomly in the closed
-   * range `[1, p - 2]`.
-   * @returns {Object}
+   * @param {string|BigInteger|number} m Piece of data to be encrypted, which
+   * must be numerically smaller than `p`.
+   * @param {BigInteger|string|number} [k] A secret number, chosen randomly in
+   * the closed range `[1, p-2]`.
+   * @returns {EncryptedValue}
    */
   async encryptAsync(m, k) {
-    const tmpKey = k || await Utils.getRandomBigIntegerAsync(
+    const tmpKey = Utils.parseBigInt(k) || await Utils.getRandomBigIntegerAsync(
       BigInteger.ONE,
       this.p.subtract(BigInteger.ONE)
     );
@@ -103,20 +107,20 @@ export default class ElGamal {
 
     let mBi = m;
     if (typeof m === 'string') {
-      // Convert `m` to BigInteger
       mBi = new BigInteger(new Buffer(m).toString('hex'), 16);
+    } else if (typeof m === 'number') {
+      mBi = new BigInteger(`${m}`);
     }
 
     const a = this.g.modPow(tmpKey, p);
     const b = this.y.modPow(tmpKey, p).multiply(mBi).remainder(p);
 
-    // TODO: Make the result convertable (to a string)
-    return { a, b };
+    return new EncryptedValue(a, b);
   }
 
   /**
    * Decrypts a message.
-   * @param {string|BigInteger} m Piece of data to be decrypted.
+   * @param {EncryptedValue} m Piece of data to be decrypted.
    * @returns {string|BigInteger}
    */
   async decryptAsync(m) {

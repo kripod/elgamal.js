@@ -1,3 +1,6 @@
+/**
+ * Stores an ElGamal-encrypted value.
+ */
 export default class EncryptedValue {
   a;
   b;

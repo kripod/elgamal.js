@@ -60,3 +60,12 @@ export async function getBigPrimeAsync(bits) {
 
   return bi;
 }
+
+/**
+ * Parses a BigInt.
+ * @param {BigInteger|string|number} obj Object to be parsed.
+ * @returns {BigInteger}
+ */
+export function parseBigInt(obj) {
+  return obj instanceof BigInteger ? obj : new BigInteger(`${obj}`);
+}
