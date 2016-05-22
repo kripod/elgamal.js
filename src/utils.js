@@ -41,7 +41,7 @@ export async function getRandomBigIntAsync(min, max) {
   const range = max.subtract(min).subtract(BigInt.ONE);
 
   // Generate random bytes with the length of the range
-  const buf = await crypto.randomBytesAsync(range.bitLength() >> 3);
+  const buf = await crypto.randomBytesAsync(Math.ceil(range.bitLength() / 8));
 
   // Offset the result by the minimum value
   const bi = new BigInt(buf.toString('hex'), 16).add(min);
