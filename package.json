@@ -1,13 +1,13 @@
 {
   "name": "elgamal",
-  "version": "0.1.0",
-  "description": "ElGamal encryption algorithm for JavaScript.",
+  "version": "0.2.0",
+  "description": "ElGamal cryptosystem for JavaScript.",
   "author": "Kristóf Poduszló <kripod@protonmail.com>",
   "license": "MIT",
   "keywords": [
     "el",
     "gamal",
-    "cryptography",
+    "crypto",
     "encrypt"
   ],
   "main": "./lib/index.js",

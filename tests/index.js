@@ -60,7 +60,7 @@ for (const [bits, vector] of Object.entries(testVectors)) {
       a: new BigInt(vector.a, 16),
       b: new BigInt(vector.b, 16),
     }).then((decrypted) => {
-      t.equal(decrypted.m.toString(16), vector.m);
+      t.equal(decrypted.bi.toString(16), vector.m);
       t.end();
     });
   });
@@ -85,7 +85,7 @@ ElGamal.generateAsync()
       eg.encryptAsync(secret)
         .then((encrypted) => eg.decryptAsync(encrypted))
         .then((decrypted) => {
-          t.equal(decrypted.m.intValue(), secret);
+          t.equal(decrypted.bi.intValue(), secret);
           t.end();
         });
     });

@@ -1,6 +1,6 @@
 # elgamal.js
 
-ElGamal encryption algorithm for JavaScript based on the implementation of
+ElGamal cryptosystem for JavaScript based on the implementation of
 [PyCrypto](https://github.com/dlitz/pycrypto).
 
 [![Version (npm)](https://img.shields.io/npm/v/elgamal.svg)](https://npmjs.com/package/elgamal)

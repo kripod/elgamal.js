@@ -95,19 +95,8 @@ export default class ElGamal {
       BigInt.ONE,
       this.p.subtract(BigInt.ONE)
     );
+    const mBi = new DecryptedValue(m).bi;
     const p = this.p;
-
-    let mBi;
-    switch (typeof m) {
-      case 'string':
-        mBi = new BigInt(new Buffer(m).toString('hex'), 16);
-        break;
-      case 'number':
-        mBi = new BigInt(`${m}`);
-        break;
-      default:
-        mBi = m;
-    }
 
     const a = this.g.modPow(tmpKey, p);
     const b = this.y.modPow(tmpKey, p).multiply(mBi).remainder(p);
