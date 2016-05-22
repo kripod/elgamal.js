@@ -67,7 +67,7 @@ for (const [bits, vector] of Object.entries(testVectors)) {
       a: new BigInt(vector.a, 16),
       b: new BigInt(vector.b, 16),
     }).then((decrypted) => {
-      t.equal(decrypted.toString(16), vector.m);
+      t.equal(decrypted.m.toString(16), vector.m);
       t.end();
     });
   });

@@ -1,6 +1,7 @@
 import ElGamal from './elgamal';
-import EncryptedValue from './encrypted-value';
+import DecryptedValue from './models/decrypted-value';
+import EncryptedValue from './models/encrypted-value';
 import * as Utils from './utils';
 
 export default ElGamal;
-export { EncryptedValue, Utils };
+export { DecryptedValue, EncryptedValue, Utils };

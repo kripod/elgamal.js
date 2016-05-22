@@ -1,5 +1,6 @@
 import { BigInteger as BigInt } from 'jsbn';
-import EncryptedValue from './encrypted-value';
+import DecryptedValue from './models/decrypted-value';
+import EncryptedValue from './models/encrypted-value';
 import * as Utils from './utils';
 
 /**
@@ -96,11 +97,16 @@ export default class ElGamal {
     );
     const p = this.p;
 
-    let mBi = m;
-    if (typeof m === 'string') {
-      mBi = new BigInt(new Buffer(m).toString('hex'), 16);
-    } else if (typeof m === 'number') {
-      mBi = new BigInt(`${m}`);
+    let mBi;
+    switch (typeof m) {
+      case 'string':
+        mBi = new BigInt(new Buffer(m).toString('hex'), 16);
+        break;
+      case 'number':
+        mBi = new BigInt(`${m}`);
+        break;
+      default:
+        mBi = m;
     }
 
     const a = this.g.modPow(tmpKey, p);
@@ -112,7 +118,7 @@ export default class ElGamal {
   /**
    * Decrypts a message.
    * @param {EncryptedValue} m Piece of data to be decrypted.
-   * @returns {string|BigInt}
+   * @returns {DecryptedValue}
    */
   async decryptAsync(m) {
     // TODO: Use a custom error object
@@ -127,6 +133,6 @@ export default class ElGamal {
     const plaintextBlind = ax.modInverse(p).multiply(m.b).remainder(p);
     const plaintext = this.y.modPow(r, p).multiply(plaintextBlind).remainder(p);
 
-    return plaintext;
+    return new DecryptedValue(plaintext);
   }
 }
