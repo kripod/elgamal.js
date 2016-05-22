@@ -29,12 +29,11 @@ const testVectors = {
 
 // Evaluate every specified test vector
 for (const [bits, vector] of Object.entries(testVectors)) {
-  test(`${bits}-bit key generation`, (t) => {
-    ElGamal.generateAsync(bits)
-      .then((eg) => {
-        t.equal(eg.p.bitLength(), parseInt(bits, 10));
-        t.end();
-      });
+  test(`${bits}-bit key generation`, async (t) => {
+    const eg = await ElGamal.generateAsync(bits);
+
+    t.equal(eg.p.bitLength(), parseInt(bits, 10));
+    t.end();
   });
 
   const eg = new ElGamal(
@@ -44,49 +43,50 @@ for (const [bits, vector] of Object.entries(testVectors)) {
     new BigInt(vector.x, 16)
   );
 
-  test(`${bits}-bit BigInt encryption`, (t) => {
-    eg.encryptAsync(
+  test(`${bits}-bit BigInt encryption`, async (t) => {
+    const encrypted = await eg.encryptAsync(
       new BigInt(vector.m, 16),
       new BigInt(vector.k, 16)
-    ).then((encrypted) => {
-      t.equal(encrypted.a.toString(16), vector.a);
-      t.equal(encrypted.b.toString(16), vector.b);
-      t.end();
-    });
+    );
+
+    t.equal(encrypted.a.toString(16), vector.a);
+    t.equal(encrypted.b.toString(16), vector.b);
+    t.end();
   });
 
-  test(`${bits}-bit BigInt decryption`, (t) => {
-    eg.decryptAsync({
+  test(`${bits}-bit BigInt decryption`, async (t) => {
+    const decrypted = await eg.decryptAsync({
       a: new BigInt(vector.a, 16),
       b: new BigInt(vector.b, 16),
-    }).then((decrypted) => {
-      t.equal(decrypted.bi.toString(16), vector.m);
-      t.end();
     });
+
+    t.equal(decrypted.bi.toString(16), vector.m);
+    t.end();
   });
 }
 
-ElGamal.generateAsync()
-  .then((eg) => {
-    test('string conversion', (t) => {
-      const secret = 'The quick brown fox jumps over the lazy dog';
+test('random ElGamal instance creation', async (t) => {
+  const eg = await ElGamal.generateAsync();
 
-      eg.encryptAsync(secret)
-        .then((encrypted) => eg.decryptAsync(encrypted))
-        .then((decrypted) => {
-          t.equal(decrypted.toString(), secret);
-          t.end();
-        });
-    });
+  test('string conversion', async (tt) => {
+    const secret = 'The quick brown fox jumps over the lazy dog';
 
-    test('number conversion', (t) => {
-      const secret = 42;
+    const encrypted = await eg.encryptAsync(secret);
+    const decrypted = await eg.decryptAsync(encrypted);
 
-      eg.encryptAsync(secret)
-        .then((encrypted) => eg.decryptAsync(encrypted))
-        .then((decrypted) => {
-          t.equal(decrypted.bi.intValue(), secret);
-          t.end();
-        });
-    });
+    tt.equal(decrypted.toString(), secret);
+    tt.end();
   });
+
+  test('number conversion', async (tt) => {
+    const secret = 42;
+
+    const encrypted = await eg.encryptAsync(secret);
+    const decrypted = await eg.decryptAsync(encrypted);
+
+    tt.equal(decrypted.bi.intValue(), secret);
+    tt.end();
+  });
+
+  t.end();
+});

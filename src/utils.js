@@ -40,14 +40,17 @@ export async function getRandomNbitBigIntAsync(bits) {
 export async function getRandomBigIntAsync(min, max) {
   const range = max.subtract(min).subtract(BigInt.ONE);
 
-  // Generate random bytes with the length of the range
-  const buf = await crypto.randomBytesAsync(Math.ceil(range.bitLength() / 8));
+  let bi;
+  do {
+    // Generate random bytes with the length of the range
+    const buf = await crypto.randomBytesAsync(Math.ceil(range.bitLength() / 8));
 
-  // Offset the result by the minimum value
-  const bi = new BigInt(buf.toString('hex'), 16).add(min);
+    // Offset the result by the minimum value
+    bi = new BigInt(buf.toString('hex'), 16).add(min);
+  } while (bi.compareTo(max) >= 0);
 
-  // Ensure that the generated value satisfies the given range
-  return bi.compareTo(max) < 0 ? bi : getRandomBigIntAsync(min, max);
+  // Return the result which satisfies the given range
+  return bi;
 }
 
 /**

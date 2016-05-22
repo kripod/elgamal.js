@@ -114,7 +114,10 @@ export default class ElGamal {
     if (!this.x) throw new Error('Private key not available.');
 
     const p = this.p;
-    const r = await Utils.getRandomBigIntAsync(2, this.p.subtract(BigInt.ONE));
+    const r = await Utils.getRandomBigIntAsync(
+      Utils.BIG_TWO,
+      this.p.subtract(BigInt.ONE)
+    );
 
     const aBlind = this.g.modPow(r, p).multiply(m.a).remainder(p);
     const ax = aBlind.modPow(this.x, p);
