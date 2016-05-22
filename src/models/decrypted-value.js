@@ -12,4 +12,8 @@ export default class DecryptedValue {
   constructor(m) {
     this.m = m;
   }
+
+  toString() {
+    return new Buffer(this.m.toByteArray()).toString();
+  }
 }

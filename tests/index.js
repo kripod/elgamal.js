@@ -37,14 +37,14 @@ for (const [bits, vector] of Object.entries(testVectors)) {
       });
   });
 
-  test(`${bits}-bit encryption`, (t) => {
-    const eg = new ElGamal(
-      new BigInt(vector.p, 16),
-      new BigInt(vector.g, 16),
-      new BigInt(vector.y, 16),
-      new BigInt(vector.x, 16)
-    );
+  const eg = new ElGamal(
+    new BigInt(vector.p, 16),
+    new BigInt(vector.g, 16),
+    new BigInt(vector.y, 16),
+    new BigInt(vector.x, 16)
+  );
 
+  test(`${bits}-bit BigInt encryption`, (t) => {
     eg.encryptAsync(
       new BigInt(vector.m, 16),
       new BigInt(vector.k, 16)
@@ -55,14 +55,7 @@ for (const [bits, vector] of Object.entries(testVectors)) {
     });
   });
 
-  test(`${bits}-bit decryption`, (t) => {
-    const eg = new ElGamal(
-      new BigInt(vector.p, 16),
-      new BigInt(vector.g, 16),
-      new BigInt(vector.y, 16),
-      new BigInt(vector.x, 16)
-    );
-
+  test(`${bits}-bit BigInt decryption`, (t) => {
     eg.decryptAsync({
       a: new BigInt(vector.a, 16),
       b: new BigInt(vector.b, 16),
@@ -72,3 +65,28 @@ for (const [bits, vector] of Object.entries(testVectors)) {
     });
   });
 }
+
+ElGamal.generateAsync()
+  .then((eg) => {
+    test('string conversion', (t) => {
+      const secret = 'The quick brown fox jumps over the lazy dog';
+
+      eg.encryptAsync(secret)
+        .then((encrypted) => eg.decryptAsync(encrypted))
+        .then((decrypted) => {
+          t.equal(decrypted.toString(), secret);
+          t.end();
+        });
+    });
+
+    test('number conversion', (t) => {
+      const secret = 42;
+
+      eg.encryptAsync(secret)
+        .then((encrypted) => eg.decryptAsync(encrypted))
+        .then((decrypted) => {
+          t.equal(decrypted.m.intValue(), secret);
+          t.end();
+        });
+    });
+  });

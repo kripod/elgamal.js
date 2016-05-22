@@ -4,14 +4,13 @@ import ElGamal from './../src';
 async function run() {
   console.time('example');
 
-  const eg = await ElGamal.generateAsync(2048);
-  // console.log(eg);
+  const eg = await ElGamal.generateAsync();
 
-  const encrypted = await eg.encryptAsync(new BigInt('672631631884797268'));
-  console.log(encrypted);
-
+  const secret = 'The quick brown fox jumps over the lazy dog';
+  const encrypted = await eg.encryptAsync(secret);
   const decrypted = await eg.decryptAsync(encrypted);
-  console.log(decrypted.toString());
+
+  console.log(decrypted.toString() === secret);
 
   console.timeEnd('example');
 }
