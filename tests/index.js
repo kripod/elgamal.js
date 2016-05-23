@@ -88,5 +88,19 @@ test('random ElGamal instance creation', async (t) => {
     tt.end();
   });
 
+  test('homomorphic multiplication', async (tt) => {
+    const m1 = new BigInt('43684365279967565');
+    const m2 = new BigInt('80916417872157521');
+    const m1m2 = m1.multiply(m2);
+
+    const e1 = await eg.encryptAsync(m1);
+    const e2 = await eg.encryptAsync(m2);
+    const e1e2 = e1.multiply(e2);
+    const decrypted = await eg.decryptAsync(e1e2);
+
+    tt.ok(decrypted.bi.equals(m1m2));
+    tt.end();
+  });
+
   t.end();
 });
