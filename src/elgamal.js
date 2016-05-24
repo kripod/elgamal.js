@@ -1,6 +1,7 @@
 import { BigInteger as BigInt } from 'jsbn';
 import DecryptedValue from './models/decrypted-value';
 import EncryptedValue from './models/encrypted-value';
+import * as Errors from './errors';
 import * as Utils from './utils';
 
 /**
@@ -107,11 +108,12 @@ export default class ElGamal {
   /**
    * Decrypts a message.
    * @param {EncryptedValue} m Piece of data to be decrypted.
+   * @throws {MissingPrivateKeyError}
    * @returns {DecryptedValue}
    */
   async decryptAsync(m) {
     // TODO: Use a custom error object
-    if (!this.x) throw new Error('Private key not available.');
+    if (!this.x) throw new Errors.MissingPrivateKeyError();
 
     const p = this.p;
     const r = await Utils.getRandomBigIntAsync(

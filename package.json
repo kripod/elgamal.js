@@ -1,6 +1,6 @@
 {
   "name": "elgamal",
-  "version": "0.2.1",
+  "version": "0.3.0",
   "description": "ElGamal cryptosystem for JavaScript.",
   "author": "Kristóf Poduszló <kripod@protonmail.com>",
   "license": "MIT",
@@ -12,7 +12,8 @@
   ],
   "main": "./lib/index.js",
   "files": [
-    "lib"
+    "lib",
+    "src"
   ],
   "directories": {
     "lib": "./lib"
@@ -28,6 +29,7 @@
   "dependencies": {
     "babel-runtime": "^6.6.1",
     "bluebird": "^3.3.5",
+    "es6-error": "^3.0.0",
     "jsbn": "^0.1.0"
   },
   "devDependencies": {

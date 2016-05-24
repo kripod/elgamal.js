@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.3.0 - 2016-05-24
+- Added support for homomorphic multiplication
+- Added a custom MissingPrivateKeyError type
+
 ## 0.2.1 - 2016-05-22
 - Fixed a BigInt generation issue which lowered the entropy of randomization
 

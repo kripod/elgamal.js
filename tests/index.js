@@ -1,6 +1,7 @@
 import { BigInteger as BigInt } from 'jsbn';
 import test from 'tape';
 import ElGamal from './../src';
+import * as Errors from './../src/errors';
 
 /* eslint-disable max-len */
 const testVectors = {
@@ -102,5 +103,26 @@ test('random ElGamal instance creation', async (t) => {
     tt.end();
   });
 
+  t.end();
+});
+
+test('error handling', async (t) => {
+  const secret = new BigInt('42');
+
+  const vector = Object.values(testVectors)[0];
+  const eg = new ElGamal(
+    new BigInt(vector.p, 16),
+    new BigInt(vector.g, 16),
+    new BigInt(vector.y, 16)
+  );
+
+  const encrypted = await eg.encryptAsync(secret);
+
+  try {
+    await eg.decryptAsync(encrypted);
+    t.fail();
+  } catch (e) {
+    t.assert(e instanceof Errors.MissingPrivateKeyError);
+  }
   t.end();
 });
