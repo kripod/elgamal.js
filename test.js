@@ -29,6 +29,7 @@ const testVectors = {
 /* eslint-enable max-len */
 
 // Evaluate every specified test vector
+let defaultEg;
 for (const [bits, vector] of Object.entries(testVectors)) {
   test(`${bits}-bit key generation`, async (t) => {
     const eg = await ElGamal.generateAsync(bits);
@@ -36,12 +37,15 @@ for (const [bits, vector] of Object.entries(testVectors)) {
     t.is(eg.p.bitLength(), parseInt(bits, 10));
   });
 
-  const eg = new ElGamal(
+  defaultEg = new ElGamal(
     new BigInt(vector.p, 16),
     new BigInt(vector.g, 16),
     new BigInt(vector.y, 16),
     new BigInt(vector.x, 16)
   );
+
+  // Store the current ElGamal instance in the scope
+  const eg = defaultEg;
 
   test(`${bits}-bit BigInt encryption`, async (t) => {
     const encrypted = await eg.encryptAsync(
@@ -63,39 +67,35 @@ for (const [bits, vector] of Object.entries(testVectors)) {
   });
 }
 
-test('random ElGamal instance creation', async (t) => {
-  const eg = await ElGamal.generateAsync();
+test('string conversion', async (t) => {
+  const secret = 'The quick brown fox jumps over the lazy dog';
 
-  test('string conversion', async (tt) => {
-    const secret = 'The quick brown fox jumps over the lazy dog';
+  const encrypted = await defaultEg.encryptAsync(secret);
+  const decrypted = await defaultEg.decryptAsync(encrypted);
 
-    const encrypted = await eg.encryptAsync(secret);
-    const decrypted = await eg.decryptAsync(encrypted);
+  t.is(decrypted.toString(), secret);
+});
 
-    tt.is(decrypted.toString(), secret);
-  });
+test('number conversion', async (t) => {
+  const secret = 42;
 
-  test('number conversion', async (tt) => {
-    const secret = 42;
+  const encrypted = await defaultEg.encryptAsync(secret);
+  const decrypted = await defaultEg.decryptAsync(encrypted);
 
-    const encrypted = await eg.encryptAsync(secret);
-    const decrypted = await eg.decryptAsync(encrypted);
+  t.is(decrypted.bi.intValue(), secret);
+});
 
-    tt.is(decrypted.bi.intValue(), secret);
-  });
+test('homomorphic multiplication', async (t) => {
+  const m1 = new BigInt('43684365279967565');
+  const m2 = new BigInt('80916417872157521');
+  const m1m2 = m1.multiply(m2);
 
-  test('homomorphic multiplication', async (tt) => {
-    const m1 = new BigInt('43684365279967565');
-    const m2 = new BigInt('80916417872157521');
-    const m1m2 = m1.multiply(m2);
+  const e1 = await defaultEg.encryptAsync(m1);
+  const e2 = await defaultEg.encryptAsync(m2);
+  const e1e2 = e1.multiply(e2);
+  const decrypted = await defaultEg.decryptAsync(e1e2);
 
-    const e1 = await eg.encryptAsync(m1);
-    const e2 = await eg.encryptAsync(m2);
-    const e1e2 = e1.multiply(e2);
-    const decrypted = await eg.decryptAsync(e1e2);
-
-    tt.true(decrypted.bi.equals(m1m2));
-  });
+  t.true(decrypted.bi.equals(m1m2));
 });
 
 test('error handling', async (t) => {
