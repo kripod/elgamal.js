@@ -1,7 +1,7 @@
+import test from 'ava';
 import { BigInteger as BigInt } from 'jsbn';
-import test from 'tape';
-import ElGamal from './../src';
-import * as Errors from './../src/errors';
+import ElGamal from './src';
+import * as Errors from './src/errors';
 
 /* eslint-disable max-len */
 const testVectors = {
@@ -33,8 +33,7 @@ for (const [bits, vector] of Object.entries(testVectors)) {
   test(`${bits}-bit key generation`, async (t) => {
     const eg = await ElGamal.generateAsync(bits);
 
-    t.equal(eg.p.bitLength(), parseInt(bits, 10));
-    t.end();
+    t.is(eg.p.bitLength(), parseInt(bits, 10));
   });
 
   const eg = new ElGamal(
@@ -50,9 +49,8 @@ for (const [bits, vector] of Object.entries(testVectors)) {
       new BigInt(vector.k, 16)
     );
 
-    t.equal(encrypted.a.toString(16), vector.a);
-    t.equal(encrypted.b.toString(16), vector.b);
-    t.end();
+    t.is(encrypted.a.toString(16), vector.a);
+    t.is(encrypted.b.toString(16), vector.b);
   });
 
   test(`${bits}-bit BigInt decryption`, async (t) => {
@@ -61,8 +59,7 @@ for (const [bits, vector] of Object.entries(testVectors)) {
       b: new BigInt(vector.b, 16),
     });
 
-    t.equal(decrypted.bi.toString(16), vector.m);
-    t.end();
+    t.is(decrypted.bi.toString(16), vector.m);
   });
 }
 
@@ -75,8 +72,7 @@ test('random ElGamal instance creation', async (t) => {
     const encrypted = await eg.encryptAsync(secret);
     const decrypted = await eg.decryptAsync(encrypted);
 
-    tt.equal(decrypted.toString(), secret);
-    tt.end();
+    tt.is(decrypted.toString(), secret);
   });
 
   test('number conversion', async (tt) => {
@@ -85,8 +81,7 @@ test('random ElGamal instance creation', async (t) => {
     const encrypted = await eg.encryptAsync(secret);
     const decrypted = await eg.decryptAsync(encrypted);
 
-    tt.equal(decrypted.bi.intValue(), secret);
-    tt.end();
+    tt.is(decrypted.bi.intValue(), secret);
   });
 
   test('homomorphic multiplication', async (tt) => {
@@ -99,11 +94,8 @@ test('random ElGamal instance creation', async (t) => {
     const e1e2 = e1.multiply(e2);
     const decrypted = await eg.decryptAsync(e1e2);
 
-    tt.ok(decrypted.bi.equals(m1m2));
-    tt.end();
+    tt.true(decrypted.bi.equals(m1m2));
   });
-
-  t.end();
 });
 
 test('error handling', async (t) => {
@@ -117,12 +109,5 @@ test('error handling', async (t) => {
   );
 
   const encrypted = await eg.encryptAsync(secret);
-
-  try {
-    await eg.decryptAsync(encrypted);
-    t.fail();
-  } catch (e) {
-    t.assert(e instanceof Errors.MissingPrivateKeyError);
-  }
-  t.end();
+  t.throws(eg.decryptAsync(encrypted), Errors.MissingPrivateKeyError);
 });

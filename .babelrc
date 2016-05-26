@@ -4,5 +4,10 @@
     "transform-async-to-generator",
     "transform-class-properties",
     "transform-runtime"
-  ]
+  ],
+  "env": {
+    "development": {
+      "sourceMaps": "inline"
+    }
+  }
 }
